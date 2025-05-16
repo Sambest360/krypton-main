@@ -1,3 +1,30 @@
+<?php
+require_once 'config/database.php';
+
+if (isset($_POST['email']) && isset($_POST['password'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $stmt = $db->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($password, $user['password'])) {
+        session_start();
+        $_SESSION['user_id'] = $user['id'];
+        if (is_null($user['kyc_verified'])) {
+            header('Location: dash.html');
+        } else {
+            header('Location: dashboard.html');
+        }
+        exit;
+    } else {
+        $errorMessage = 'Invalid email or password';
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,12 +78,12 @@
                     <h2 class="fs-3 fw-semibold mb-2">Login</h2>
                     <p class="text-secondary mb-4">Enter your credentials to access your account</p>
                     
+                    <!-- Error Message (Hidden by default) -->
+                    <div id="errorMessage" class="d-none alert alert-danger mb-3" role="alert">
+                        <?php echo $errorMessage ?? ''; ?>
+                    </div>
+                    
                     <form id="loginForm">
-                        <!-- Error Message (Hidden by default) -->
-                        <div id="errorMessage" class="d-none alert alert-danger mb-3" role="alert">
-                            Please fill in all fields
-                        </div>
-                        
                         <!-- Email Field -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
