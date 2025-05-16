@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --trading-primary: 244 75% 67%;
+    --trading-secondary: 245 58% 51%;
+    --border-radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-4 py-2;
+  }
+
+  .btn-primary {
+    @apply bg-[hsl(var(--trading-primary))] text-white hover:bg-[hsl(var(--trading-secondary))];
+  }
+
+  .btn-outline {
+    @apply border border-[hsl(var(--muted-foreground))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] hover:border-[hsl(var(--foreground))];
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+}
