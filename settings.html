@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings - Krypton</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/assets/images/letter-k.png">
+
     <style>
         body {
             font-family: "Inter", sans-serif;
@@ -17,25 +20,46 @@
             min-width: 256px;
             max-width: 256px;
             height: 100vh;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
             background: #fff;
             border-right: 1px solid #e5e7eb;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .navbar-toggler {
+                display: block !important;
+            }
         }
 
         .sidebar .logo {
-            color: #2563eb;
+            color: #9377f0;
             font-size: 24px;
             font-weight: 700;
         }
 
         .sidebar .nav-link.active {
-            background: rgba(37, 99, 235, 0.1);
-            color: #2563eb !important;
-            border-left: 4px solid #2563eb;
+            background: rgba(147, 119, 240, 0.1);
+            color: #9377f0 !important;
+            border-left: 4px solid #9377f0;
             font-weight: 600;
         }
 
@@ -47,8 +71,8 @@
         }
 
         .sidebar .nav-link:hover {
-            background: rgba(37, 99, 235, 0.07);
-            color: #2563eb !important;
+            background: rgba(147, 119, 240, 0.07);
+            color: #9377f0 !important;
         }
 
         .sidebar .logout {
@@ -56,47 +80,132 @@
             padding-top: 1rem;
         }
 
-        .dashboard-header {
-            margin-bottom: 24px;
+        .navbar-toggler {
+            display: none;
+            border: none;
+            padding: 0.5rem;
+            font-size: 1.25rem;
+            line-height: 1;
+            background-color: transparent;
+            border-radius: 0.25rem;
         }
 
-        .dashboard-header h1 {
-            font-size: 24px;
-            font-weight: 700;
+        .main-content {
+            margin-left: 256px;
+            transition: margin-left 0.3s ease-in-out;
         }
 
-        .dashboard-header p {
-            color: #6c757d;
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
 
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
+        .overlay.show {
+            display: block;
         }
 
-        .asset-card {
-            background: #f1f5f9;
-            border: 1px solid #e5e7eb;
+        @media (max-width: 767.98px) {
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .form-label {
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                font-size: 0.9rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
         }
 
-        .transaction .icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+        @media (max-width: 575.98px) {
+            .container-fluid {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            .form-control {
+                font-size: 0.85rem;
+            }
+
+            .btn {
+                font-size: 0.85rem;
+            }
         }
 
-        /* Using Bootstrap's utility classes instead */
+        /* Form specific styles */
+        .form-control:focus {
+            border-color: #9377f0;
+            box-shadow: 0 0 0 0.2rem rgba(147, 119, 240, 0.25);
+        }
+
+        .form-check-input:checked {
+            background-color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .btn-primary {
+            background-color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .btn-primary:hover {
+            background-color: #8264e0;
+            border-color: #8264e0;
+        }
+
+        .btn-outline-primary {
+            color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .text-primary {
+            color: #9377f0 !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: rgba(147, 119, 240, 0.1) !important;
+        }
     </style>
 </head>
 
 <body class="bg-light">
     <div class="d-flex">
-        <aside class="sidebar bg-white border-end d-flex flex-column justify-content-between py-4 px-3"
-            style="width: 300px">
+        <!-- Mobile Navbar Toggle -->
+        <button class="navbar-toggler position-fixed top-0 start-0 m-3" type="button" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar bg-white border-end d-flex flex-column justify-content-between py-4 px-3">
             <div>
                 <div class="d-flex align-items-center mb-4">
                     <div class="rounded bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center me-2 fs-5"
@@ -129,17 +238,17 @@
                 </a>
             </div>
         </aside>
+
         <!-- Main Content -->
-        <main class="py-4 w-100">
+        <main class="main-content py-4 w-100">
             <div class="container-fluid px-4" style="max-width: 1200px; margin: 0 auto;">
                 <div class="row g-4">
-    
                     <div class="mb-4 text-center">
                         <h1 class="fs-2 fw-bold">Settings</h1>
                     </div>
-    
+
                     <div class="row mt-4 justify-content-center">
-                        <div class="col-md-6">
+                        <div class="col-lg-6 col-md-12">
                             <div class="card">
                                 <div class="card-body">
                                     <h3 class="card-title mb-4 text-center">User Account Info</h3>
@@ -177,7 +286,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-lg-6 col-md-12">
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <h3 class="card-title mb-4 text-center">Security Settings</h3>
@@ -220,8 +329,34 @@
             </div>
         </main>
     </div>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS for mobile sidebar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+                document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar on window resize if open
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 991.98 && sidebar.classList.contains('show')) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
