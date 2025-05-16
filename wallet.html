@@ -18,6 +18,7 @@
         body {
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            
         }
 
         .sidebar {
@@ -161,6 +162,200 @@
             }
         }
     </style>
+
+
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background-color: #ffffff;
+            padding: 1rem;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #9377f0;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar .nav-link {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            color: #6b7280;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background-color: #e0e7ff;
+            color: #9377f0;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card .card-title {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .card .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 200px;
+        }
+
+        .asset-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .asset-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .asset-list li .asset-name {
+            font-weight: 500;
+        }
+
+        .asset-list li .asset-value {
+            color: #6b7280;
+        }
+
+        .recent-transactions {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recent-transactions li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .recent-transactions li .transaction-type {
+            font-weight: 500;
+        }
+
+        .recent-transactions li .transaction-amount {
+            color: #6b7280;
+        }
+
+
+
+
+        /* Dark Theme Styles */
+  body.dark-theme {
+    background-color: #3b3737;
+    color: #ffffff;
+  }
+
+  .dark-theme .sidebar {
+    background-color: #706363;
+    border-right-color: #0a0a0a;
+  }
+
+  .dark-theme .sidebar .logo {
+    color: #a78bfa;
+  }
+
+  .dark-theme .sidebar .nav-link {
+    color: #b0b0b0;
+  }
+
+  .dark-theme .sidebar .nav-link.active,
+  .dark-theme .sidebar .nav-link:hover {
+    background-color: #fdcece;
+    color: #a78bfa;
+  }
+
+  .dark-theme .card {
+    background-color: #130101;
+    box-shadow: 0 4px 6px rgba(179, 105, 105, 0);
+    
+  }
+
+  .dark-theme .card .card-title {
+    color: #e0e0e0;
+  }
+
+  .dark-theme .card .card-value {
+    color: #ffffff;
+  }
+
+  .dark-theme .btn-primary {
+    background-color: #77629c;
+    border-color: #5d06f3;
+  }
+
+  .dark-theme .btn-primary:hover {
+    background-color: #a687d8;
+    border-color: #6406fc;
+  }
+
+  .dark-theme .text-primary {
+    color: #a78bfa !important;
+  }
+
+  .dark-theme .bg-primary-subtle {
+    background-color: rgb(255, 255, 255) !important;
+  }
+
+  .dark-theme .asset-value,
+  .dark-theme .recent-transactions li .transaction-amount {
+    color: #b0b0b0;
+  }
+
+  .dark-theme .asset-list li,
+  .dark-theme .recent-transactions li {
+    border-bottom-color: #444;
+  }
+
+  .dark-theme .navbar-toggler {
+    background-color: #2d2d2d;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-theme .overlay {
+    background: rgba(10, 10, 10, 0.7);
+  }
+
+  .dark-theme .edit-asset-btn:hover {
+    background-color: #6d28d9;
+  }
+    </style>
+
+
+
+
+
 </head>
 
 <body class="bg-light">
@@ -168,9 +363,23 @@
     <button class="navbar-toggler" type="button" id="sidebarToggle">
         <i class="bi bi-list"></i>
     </button>
+       
+
+
+       <!--<button class="theme-toggle" style="position: fixed; top: 1rem; right: 1rem; z-index: 1060; background: none; border: none; cursor: pointer;">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>     -->
+
+
+
+
+
 
     <!-- Mobile Overlay -->
     <div class="overlay" id="overlay"></div>
+
 
     <div class="d-flex">
         <!-- Sidebar -->
@@ -212,7 +421,33 @@
                         </select>
                     </div>
                 </div>
+                 
 
+
+
+                          
+                <script>
+                document.querySelector('.theme-toggle').addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+    
+                    // Optional: Save preference to localStorage
+                 if (document.body.classList.contains('dark-theme')) {
+                 localStorage.setItem('theme', 'dark');
+                  } else {
+                 localStorage.setItem('theme', 'light');
+                  }
+                 });
+ 
+                       // Optional: Load saved theme preference
+                if (localStorage.getItem('theme') === 'dark') {
+                    document.body.classList.add('dark-theme');
+                }
+                </script>
+
+
+
+
+                
                 <!-- Stats Cards -->
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-6 col-lg-3">
