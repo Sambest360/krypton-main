@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet - Krypton</title>
+    <title>Financial Analytics - Krypton</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -12,103 +13,565 @@
     <link rel="stylesheet" href="assets/css/custom.css">
     <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/assets/images/letter-k.png">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            min-width: 256px;
+            max-width: 256px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .navbar-toggler {
+                display: block !important;
+            }
+        }
+
+        .main-content {
+            margin-left: 256px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        @media (max-width: 767.98px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .card-body {
+                padding: 1rem;
+            }
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            .asset-value {
+                font-size: 0.75rem;
+            }
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
+
+        .navbar-toggler {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1060;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .btn-primary:hover {
+            background-color: #8264e0;
+            border-color: #8264e0;
+        }
+
+        .text-primary {
+            color: #9377f0 !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: rgba(147, 119, 240, 0.1) !important;
+        }
+
+        .asset-value {
+            font-family: 'Inter', monospace;
+        }
+
+        .edit-asset-btn {
+            opacity: 1;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 6px;
+        }
+
+        .edit-asset-btn:hover {
+            background-color: #8264e0;
+            color: white;
+        }
+
+        .modal-backdrop {
+            z-index: 1040;
+        }
+
+        .modal {
+            z-index: 1050;
+        }
+
+        .chart-container {
+            max-height: 200px;
+            position: relative;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                max-height: 180px;
+            }
+        }
+    </style>
 </head>
-<body class="wallet-page">
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="dashboard.html" class="nav-logo">Krypton</a>
-            <ul class="nav-menu">
-                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-                <li><a href="wallet.html" class="nav-link active">Wallet</a></li>
-                <li><a href="profile.html" class="nav-link">Profile</a></li>
-                <li><a href="#" class="nav-link" onclick="logout()">Logout</a></li>
-            </ul>
-            <button class="mobile-menu-btn">☰</button>
-        </div>
-    </nav>
 
-    <main>
-        <div class="container">
-            <div class="wallet-header">
-                <h1>Your Wallet</h1>
-                <div class="wallet-actions">
-                    <button class="btn btn-primary" onclick="showDepositModal()">Deposit</button>
-                    <button class="btn btn-secondary" onclick="showWithdrawModal()">Withdraw</button>
-                    <button class="btn btn-outline" onclick="showTransferModal()">Transfer</button>
+<body class="bg-light">
+    <!-- Mobile Navigation Toggle -->
+    <button class="navbar-toggler" type="button" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-white border-end d-flex flex-column justify-content-between py-4 px-3">
+            <div>
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center me-2 fs-5"
+                        style="width: 40px; height: 40px">
+                        KP
+                    </div>
+                    <span class="logo fs-4 fw-bold text-dark">Krypton</span>
                 </div>
+                <nav class="nav flex-column gap-2">
+                    <a href="/wallet.html"
+                        class="nav-link d-flex active align-items-center gap-2 px-3 py-2 rounded bg-light text-secondary">
+                        <i class="bi bi-graph-up"></i>
+                        Financial Analytics
+                    </a>
+                    <a href="/adminDashboard.html"
+                        class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded text-secondary">
+                        <i class="bi bi-people"></i>
+                        User Management
+                    </a>
+                </nav>
             </div>
+        </aside>
 
-            <div class="wallet-grid">
-                <div class="card wallet-balance">
-                    <h3>Available Balance</h3>
-                    <div class="balance-amount" id="walletBalance">$0.00</div>
-                    <div class="wallet-details">
-                        <div class="detail-item">
-                            <span class="label">Pending</span>
-                            <span class="value" id="pendingBalance">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Total</span>
-                            <span class="value" id="totalBalance">$0.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card wallet-assets">
-                    <h3>Your Assets</h3>
-                    <div class="assets-list" id="walletAssets">
-                        <!-- Assets will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <div class="card transaction-history">
-                    <h3>Transaction History</h3>
-                    <div class="transaction-filters">
-                        <select id="transactionType" class="form-input">
-                            <option value="all">All Transactions</option>
-                            <option value="deposit">Deposits</option>
-                            <option value="withdraw">Withdrawals</option>
-                            <option value="transfer">Transfers</option>
+        <!-- Main Content -->
+        <main class="main-content w-100">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">Financial Analytics</h1>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="timeRange">
+                            <option value="7">Last 7 days</option>
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                            <option value="365">Last year</option>
                         </select>
                     </div>
-                    <div class="transactions-table" id="transactionsTable">
-                        <!-- Transactions will be populated by JavaScript -->
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="card-subtitle text-muted">Total Users</h6>
+                                        <h2 class="card-title mb-0">12,345</h2>
+                                    </div>
+                                    <div class="rounded-circle bg-primary-subtle p-2">
+                                        <i class="bi bi-people text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-success me-2">
+                                        <i class="bi bi-arrow-up"></i> 12%
+                                    </span>
+                                    <span class="text-muted small">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="card-subtitle text-muted">Total Volume (USD)</h6>
+                                        <h2 class="card-title mb-0">$2.4M</h2>
+                                    </div>
+                                    <div class="rounded-circle bg-success-subtle p-2">
+                                        <i class="bi bi-currency-dollar text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-success me-2">
+                                        <i class="bi bi-arrow-up"></i> 8%
+                                    </span>
+                                    <span class="text-muted small">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="card-subtitle text-muted">Active Wallets</h6>
+                                        <h2 class="card-title mb-0">8,892</h2>
+                                    </div>
+                                    <div class="rounded-circle bg-warning-subtle p-2">
+                                        <i class="bi bi-wallet2 text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-success me-2">
+                                        <i class="bi bi-arrow-up"></i> 5%
+                                    </span>
+                                    <span class="text-muted small">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="card-subtitle text-muted">Total Transactions</h6>
+                                        <h2 class="card-title mb-0">45.2K</h2>
+                                    </div>
+                                    <div class="rounded-circle bg-info-subtle p-2">
+                                        <i class="bi bi-arrow-left-right text-info"></i>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-danger me-2">
+                                        <i class="bi bi-arrow-down"></i> 3%
+                                    </span>
+                                    <span class="text-muted small">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </main>
 
-    <!-- Modals -->
-    <div id="depositModal" class="modal">
-        <div class="modal-content">
-            <h2>Deposit Funds</h2>
-            <form id="depositForm" class="form">
-                <div class="form-group">
-                    <label for="depositAmount" class="form-label">Amount</label>
-                    <input type="number" id="depositAmount" name="amount" class="form-input" required min="0" step="0.01">
+                <!-- Charts Row 1 -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Transaction Volume</h5>
+                                <div class="chart-container">
+                                    <canvas id="transactionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Asset Distribution</h5>
+                                <div class="chart-container">
+                                    <canvas id="assetDistribution"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="depositMethod" class="form-label">Payment Method</label>
-                    <select id="depositMethod" name="method" class="form-input" required>
-                        <option value="">Select payment method</option>
-                        <option value="bank">Bank Transfer</option>
-                        <option value="card">Credit/Debit Card</option>
-                        <option value="crypto">Cryptocurrency</option>
-                    </select>
+
+                <!-- Charts Row 2 -->
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">User Growth</h5>
+                                <div class="chart-container">
+                                    <canvas id="userGrowthChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Transaction Types</h5>
+                                <div class="chart-container">
+                                    <canvas id="transactionTypesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Proceed</button>
-                <button type="button" class="btn btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
-            </form>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Asset Modal -->
+    <div class="modal fade" id="editAssetModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User Assets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAssetForm">
+                        <div class="mb-3">
+                            <label class="form-label">User</label>
+                            <input type="text" class="form-control" id="editUserName" readonly>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">BTC</label>
+                                <input type="number" class="form-control" step="0.0001" placeholder="BTC amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">ETH</label>
+                                <input type="number" class="form-control" step="0.0001" placeholder="ETH amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">XRP</label>
+                                <input type="number" class="form-control" step="0.01" placeholder="XRP amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">USD</label>
+                                <input type="number" class="form-control" step="0.01" placeholder="USD amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">GBP</label>
+                                <input type="number" class="form-control" step="0.01" placeholder="GBP amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">EUR</label>
+                                <input type="number" class="form-control" step="0.01" placeholder="EUR amount">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveAssetChanges">Save Changes</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Krypton. All rights reserved.</p>
-        </div>
-    </footer>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Mobile sidebar functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay');
 
-    <script src="assets/js/main.js"></script>
+            function toggleSidebar() {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+                document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar on window resize if open
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 991.98 && sidebar.classList.contains('show')) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Transaction Volume Chart
+            new Chart(document.getElementById('transactionChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Transaction Volume',
+                        data: [30, 45, 35, 50, 42, 60],
+                        borderColor: '#9377f0',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(147, 119, 240, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Asset Distribution Chart
+            new Chart(document.getElementById('assetDistribution'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['BTC', 'ETH', 'XRP', 'USD', 'EUR', 'GBP'],
+                    datasets: [{
+                        data: [30, 25, 15, 10, 10, 10],
+                        backgroundColor: [
+                            '#9377f0',
+                            '#8264e0',
+                            '#6c50d3',
+                            '#583cc6',
+                            '#4428b9',
+                            '#3014ac'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // User Growth Chart
+            new Chart(document.getElementById('userGrowthChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [1200, 1900, 1500, 2100, 1800, 2400],
+                        backgroundColor: '#9377f0'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Transaction Types Chart
+            new Chart(document.getElementById('transactionTypesChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Deposits', 'Withdrawals', 'Transfers', 'Trades'],
+                    datasets: [{
+                        data: [40, 25, 20, 15],
+                        backgroundColor: [
+                            '#9377f0',
+                            '#8264e0',
+                            '#6c50d3',
+                            '#583cc6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+
+            // Time range selector
+            document.getElementById('timeRange').addEventListener('change', function() {
+                // Here you would typically fetch new data based on the selected time range
+                // and update the charts accordingly
+                console.log('Time range changed to:', this.value, 'days');
+            });
+        });
+        editAssetModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const userName = button.getAttribute('data-user');
+            const modalTitle = editAssetModal.querySelector('.modal-title');
+            const userNameInput = document.getElementById('editUserName');
+
+            modalTitle.textContent = `Edit Assets - ${userName}`;
+            userNameInput.value = userName;
+        });
+
+        // Handle search
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                const userName = row.querySelector('.fw-semibold').textContent.toLowerCase();
+                const userEmail = row.querySelector('.text-muted').textContent.toLowerCase();
+
+                if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Handle save changes
+        document.getElementById('saveAssetChanges').addEventListener('click', function () {
+            // Add your save logic here
+            const modal = bootstrap.Modal.getInstance(editAssetModal);
+            modal.hide();
+            // Show success message
+            alert('Changes saved successfully!');
+        });
+    </script>
 </body>
+
 </html>

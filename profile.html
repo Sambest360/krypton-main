@@ -17,7 +17,7 @@
 
     <style>
         body {
-            font-family: "Inter", sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         .sidebar {
@@ -55,15 +55,15 @@
         }
 
         .sidebar .logo {
-            color: #2563eb;
+            color: #9377f0;
             font-size: 24px;
             font-weight: 700;
         }
 
         .sidebar .nav-link.active {
-            background: rgba(37, 99, 235, 0.1);
-            color: #2563eb !important;
-            border-left: 4px solid #2563eb;
+            background: rgba(147, 119, 240, 0.10);
+            color: #9377f0 !important;
+            border-left: 4px solid #9377f0;
             font-weight: 600;
         }
 
@@ -75,8 +75,8 @@
         }
 
         .sidebar .nav-link:hover {
-            background: rgba(37, 99, 235, 0.07);
-            color: #2563eb !important;
+            background: rgba(147, 119, 240, 0.07);
+            color: #9377f0 !important;
         }
 
         .sidebar .logout {
@@ -102,6 +102,37 @@
             font-weight: 600;
         }
 
+        .asset-card {
+            background: #f1f5f9;
+            border: 1px solid #e5e7eb;
+        }
+
+        .transaction .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .bg-green-100 {
+            background: #dcfce7;
+        }
+
+        .bg-red-100 {
+            background: #fee2e2;
+        }
+
+        .text-green-500 {
+            color: #22c55e;
+        }
+
+        .text-red-500 {
+            color: #ef4444;
+        }
+
         .navbar-toggler {
             display: none;
             border: none;
@@ -115,6 +146,24 @@
         .main-content {
             margin-left: 256px;
             transition: margin-left 0.3s ease-in-out;
+        }
+
+        @media (max-width: 767.98px) {
+            .dashboard-header h1 {
+                font-size: 20px;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .asset-card {
+                margin-bottom: 1rem;
+            }
+
+            .display-6 {
+                font-size: 1.5rem;
+            }
         }
 
         .overlay {
@@ -132,36 +181,33 @@
             display: block;
         }
 
-        @media (max-width: 767.98px) {
-            .card {
-                margin-bottom: 1rem;
-            }
-
-            .list-group-item {
-                font-size: 0.9rem;
-                padding: 0.75rem 1rem;
-            }
-
-            .card-title {
-                font-size: 1.1rem;
-            }
-
-            .profile-image {
-                width: 120px !important;
-                height: 120px !important;
-            }
+        /* Button styles */
+        .btn-primary {
+            background-color: #9377f0;
+            border-color: #9377f0;
         }
 
-        @media (max-width: 575.98px) {
-            .container-fluid {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
+        .btn-primary:hover {
+            background-color: #8264e0;
+            border-color: #8264e0;
+        }
 
-            .list-group-item {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.75rem;
-            }
+        .btn-outline-primary {
+            color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #9377f0;
+            border-color: #9377f0;
+        }
+
+        .text-primary {
+            color: #9377f0 !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: rgba(147, 119, 240, 0.1) !important;
         }
     </style>
 </head>
